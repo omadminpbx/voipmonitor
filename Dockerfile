@@ -29,12 +29,14 @@ RUN mysql -u root -e "CREATE DATABASE voipmonitor;"
 RUN mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'jeTZK2ipdVK';"
 RUN service voipmonitor enable
 RUN service voipmonitor start
+RUN mv /etc/voipmonitor.conf /etc/voipmonitor.conf.bak
 RUN cd /var/www/html
 RUN wget "http://www.voipmonitor.org/download-gui?version=latest&major=5&phpver=72&festry" -O w.tar.gz
 RUN tar xzf w.tar.gz
 RUN mv voipmonitor-gui*/* ./
 RUN rm -f /var/www/html/index.html
 RUN rm -f /var/www/html/w.tar.gz
+ADD key.php /var/hmtl/
 RUN chown www-data /var/spool/voipmonitor/
 RUN chown -R www-data /var/www
 RUN echo "* * * * * root php /var/www/html/php/run.php cron" >> /etc/crontab
@@ -43,9 +45,11 @@ RUN cronp=$(ps -aux | pgrep cron)
 RUN echo Cron process number is $cronp. Now kill it!
 RUN kill -9 $cronp
 RUN echo Kill done
+ADD voipmonitor.conf /etc/voipmonitor.conf
 RUN service apache2 restart
-WORKDIR /
+ADD key.php /var/hmtl/
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 EXPOSE 8089 2100
+WORKDIR /
 CMD ["/docker-entrypoint.sh", "start"]
