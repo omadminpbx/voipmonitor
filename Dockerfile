@@ -2,7 +2,7 @@ FROM httpd:latest
 LABEL maintainer fbarbier@orizonmobile.com
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update
-RUN apt-get -y install mtr ethtool rrdtool librsvg2-bin gsfonts openssh-server nano sudo curl git wget htop iftop lsof cron
+RUN apt-get -y install mtr ethtool rrdtool librsvg2-bin gsfonts openssh-server nano sudo curl git wget htop iftop lsof cron apache2
 RUN sed -ie 's/#Port 22/Port 14501/g' /etc/ssh/sshd_config
 RUN sed -ie 's/#PermitRootLogin/PermitRootLogin/g' /etc/ssh/sshd_config
 RUN sed -ie 's/#AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
@@ -44,9 +44,10 @@ RUN cronp=$(ps -aux | pgrep cron)
 RUN echo Cron process number is $cronp. Now kill it!
 RUN kill -9 $cronp
 RUN echo Kill done
+ADD ports.conf /etc/apache2/ports.conf
 ADD voipmonitor.conf /etc/voipmonitor.conf
-RUN service apache2 restart
 ADD key.php /var/hmtl/
+RUN service apache2 restart
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 EXPOSE 8089 2100
