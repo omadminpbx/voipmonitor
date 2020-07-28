@@ -7,7 +7,6 @@ RUN sed -ie 's/#Port 22/Port 14501/g' /etc/ssh/sshd_config
 RUN sed -ie 's/#PermitRootLogin/PermitRootLogin/g' /etc/ssh/sshd_config
 RUN sed -ie 's/#AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 RUN sed -ie 's/#X11/X11/g' /etc/ssh/sshd_config
-RUN sed -ie 's/Listen 80/Listen 8089/g' /etc/apache2/ports.conf
 RUN /etc/init.d/ssh start
 RUN /etc/init.d/cron start
 RUN apt-get -y install default-mysql-server
